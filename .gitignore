@@ -51,3 +51,6 @@ dev_resources/
 *.glb.backup
 *.gltf.backup
 
+
+# Claws
+.claws/

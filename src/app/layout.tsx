@@ -9,8 +9,8 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: '3D Cargo Management System',
-  description: 'Interactive 3D visualization of air cargo warehouse management',
+  title: 'Bus Fleet Intelligence System',
+  description: 'Mobile urban intelligence platform — city-wide road, traffic and safety intelligence from the bus fleet',
 }
 
 export default function RootLayout({

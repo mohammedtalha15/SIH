@@ -2,7 +2,7 @@
 
 import { Canvas } from '@react-three/fiber'
 import { OrbitControls, Environment, ContactShadows } from '@react-three/drei'
-import { Suspense, useState, createContext, useContext } from 'react'
+import { Suspense, useState, useEffect, createContext, useContext } from 'react'
 import { Ground } from './ground'
 import { Warehouse } from './warehouse'
 import { AnimatedTruck } from './animated-truck'
@@ -94,7 +94,27 @@ function Scene() {
   )
 }
 
-export function WarehouseScene({ onOpenWarehouseLayout }: { onOpenWarehouseLayout?: (warehouseId: string) => void }) {
+/**
+ * Mounted inside the Canvas's Suspense boundary, so its effect runs only once
+ * the suspended scene content has actually resolved and committed. That is the
+ * signal the DOM needs — `useProgress` reports inactive during the gap between
+ * the canvas mounting and the first asset request, so a loader keyed on it
+ * flickers off while the viewport is still empty.
+ */
+function SceneReady({ onReady }: { onReady?: () => void }) {
+  useEffect(() => {
+    onReady?.()
+  }, [onReady])
+  return null
+}
+
+export function WarehouseScene({
+  onOpenWarehouseLayout,
+  onReady,
+}: {
+  onOpenWarehouseLayout?: (warehouseId: string) => void
+  onReady?: () => void
+}) {
   const [selected, setSelected] = useState<SelectedObject | null>(null)
 
   const handlePointerMissed = () => {
@@ -114,12 +134,18 @@ export function WarehouseScene({ onOpenWarehouseLayout }: { onOpenWarehouseLayou
           shadows
           camera={{ position: [60, 40, 70], fov: 50 }}
           onPointerMissed={handlePointerMissed}
-          style={{ background: 'linear-gradient(to bottom, #E8F4FC 0%, #FFFFFF 40%)' }}
+          // Measure via offsetWidth/offsetHeight. The default path reads the
+          // ResizeObserver's contentRect, which can report 0 on first layout and
+          // then never fire again for a container whose size never changes —
+          // leaving the canvas at its 300x150 default and the scene invisible.
+          resize={{ offsetSize: true }}
+          style={{ background: 'linear-gradient(to bottom, #f4f4f2 0%, #ffffff 45%)' }}
         >
-          <fog attach="fog" args={['#F0F8FF', 120, 300]} />
+          <fog attach="fog" args={['#f7f7f6', 120, 300]} />
           
           <Suspense fallback={null}>
             <Scene />
+            <SceneReady onReady={onReady} />
           </Suspense>
           <OrbitControls
             enablePan={true}
