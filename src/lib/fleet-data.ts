@@ -1,13 +1,18 @@
 /**
- * Fleet data for the Overview dashboard.
+ * Fleet data for the Overview dashboard — BMTC, Bengaluru.
+ *
+ * Depots, route numbers and registration series are real BMTC/Bengaluru values
+ * (depot list and divisions per BMTC's published depot table; route numbers per
+ * BMTC's own route listings). The measurements attached to them are synthetic.
  *
  * MVP data: hardcoded, or derived from a seeded generator. Deliberately NOT
  * `Math.random()` at module scope — the older `mock-data.ts` does that, so the
  * server and the client each produce different values and React reports a
  * hydration mismatch. Everything here renders identically on both.
  *
- * Depot ids match the warehouse ids the 3D scene emits on click, so selecting a
- * building in the scene resolves straight to a depot.
+ * The first two depot ids match the warehouse ids the 3D scene emits on click,
+ * so selecting a building in the scene resolves straight to a depot. The rest
+ * are list-only — BMTC runs 50 depots and the model shows two sheds.
  */
 
 export type BusStatus = 'on-route' | 'idle' | 'maintenance'
@@ -41,9 +46,9 @@ export type Depot = {
 export const DEPOTS: Depot[] = [
   {
     id: 'warehouse-1',
-    name: 'North Depot',
-    code: 'DEP-N1',
-    zone: 'North & Central wards',
+    name: 'Yeshwanthpura',
+    code: 'D-08',
+    zone: 'North division · Bengaluru Urban',
     busCount: 132,
     activeCount: 118,
     coveragePct: 89.2,
@@ -51,19 +56,64 @@ export const DEPOTS: Depot[] = [
   },
   {
     id: 'warehouse-2',
-    name: 'East Depot',
-    code: 'DEP-E2',
-    zone: 'East & Riverside wards',
+    name: 'Koramangala',
+    code: 'D-15',
+    zone: 'East division · Bengaluru Urban',
     busCount: 116,
     activeCount: 97,
     coveragePct: 84.7,
     healthScore: 70.8,
   },
+  {
+    id: 'depot-shanthinagara',
+    name: 'Shanthinagara',
+    code: 'D-02',
+    zone: 'South division · Bengaluru Urban',
+    busCount: 148,
+    activeCount: 129,
+    coveragePct: 91.4,
+    healthScore: 72.5,
+  },
+  {
+    id: 'depot-krishnarajapura',
+    name: 'Krishnarajapura',
+    code: 'D-24',
+    zone: 'North-East division · Bengaluru Urban',
+    busCount: 121,
+    activeCount: 104,
+    coveragePct: 82.3,
+    healthScore: 66.9,
+  },
+  {
+    id: 'depot-kengeri',
+    name: 'Kengeri',
+    code: 'D-12',
+    zone: 'South-West division · Bengaluru Urban',
+    busCount: 109,
+    activeCount: 92,
+    coveragePct: 78.6,
+    healthScore: 69.4,
+  },
+  {
+    id: 'depot-electronic-city',
+    name: 'Electronic City',
+    code: 'D-19',
+    zone: 'East division · Bengaluru Urban',
+    busCount: 137,
+    activeCount: 119,
+    coveragePct: 86.1,
+    healthScore: 64.2,
+  },
 ]
 
+/** Real BMTC route numbers, grouped by the depot that plausibly works them. */
 const ROUTES_BY_DEPOT: Record<string, string[]> = {
-  'warehouse-1': ['R-12 Ring Road', 'R-04 Station Loop', 'R-27 College Rd', 'R-31 Market Circle'],
-  'warehouse-2': ['R-18 Dock Access', 'R-09 Riverside', 'R-22 Industrial Ave', 'R-15 Airport Link'],
+  'warehouse-1': ['252 Yeshwanthpura–Majestic', '276 KBS–Vidyaranyapura', 'G-8 Nelamangala–BRV', '250I KBS–Chikkabanavara'],
+  'warehouse-2': ['G-2 E-City–Brigade Rd', '201R Srinagara–CV Raman Nagar', '171 Koramangala–Shivajinagara', 'G-3 Sarjapura–M.G. Road'],
+  'depot-shanthinagara': ['G-4 Bannerghatta–Brigade Rd', '365 KBS–Bannerghatta NP', '356C KBS–Electronic City', 'V-356 Shanthinagara–E-City'],
+  'depot-krishnarajapura': ['500D Hebbala–Central Silk Board', 'G-12 Halsoor–K.R. Puram', '335E KBS–Kadugodi', '500DB Hebbala–Hope Farm'],
+  'depot-kengeri': ['G-6 Kengeri Sat. Town–Hudson Circle', '375A Kengeri–E-City', '500KS Kengeri–Kadugodi', '45G KBS–BSK 3rd Stage'],
+  'depot-electronic-city': ['356M KBS–Anekal', '360B KBS–Attibele', '600KA Vijayanagara–E-City PH II', '505 E-City–ITPL'],
 }
 
 const STATUS_CYCLE: BusStatus[] = [
@@ -90,7 +140,8 @@ function seeded(i: number): number {
 }
 
 function buildBuses(depot: Depot, offset: number, count: number): Bus[] {
-  const routes = ROUTES_BY_DEPOT[depot.id]
+  // Every depot in DEPOTS has an entry; fall back so a new depot can't crash the list.
+  const routes = ROUTES_BY_DEPOT[depot.id] ?? ROUTES_BY_DEPOT['warehouse-1']
   return Array.from({ length: count }, (_, i) => {
     const n = offset + i
     const status = STATUS_CYCLE[n % STATUS_CYCLE.length]
@@ -99,7 +150,7 @@ function buildBuses(depot: Depot, offset: number, count: number): Bus[] {
 
     return {
       id: `bus-${n}`,
-      fleetNumber: `${depot.code.slice(-2)}-${String(1040 + n * 7).padStart(4, '0')}`,
+      fleetNumber: `KA-01-F-${String(1040 + n * 37).padStart(4, '0')}`,
       depotId: depot.id,
       route: routes[n % routes.length],
       status,
@@ -111,11 +162,13 @@ function buildBuses(depot: Depot, offset: number, count: number): Bus[] {
   })
 }
 
-/** A representative slice per depot — enough to browse, not the full roster. */
-export const BUSES: Bus[] = [
-  ...buildBuses(DEPOTS[0], 0, 14),
-  ...buildBuses(DEPOTS[1], 14, 12),
-]
+/**
+ * A representative slice per depot — enough to browse, not the full roster.
+ * BMTC runs ~7,000 buses; these stand in for the ones this MVP tracks.
+ */
+export const BUSES: Bus[] = DEPOTS.flatMap((depot, i) =>
+  buildBuses(depot, i * 14, 12 + (i % 3)),
+)
 
 export function busesForDepot(depotId: string): Bus[] {
   return BUSES.filter((b) => b.depotId === depotId)

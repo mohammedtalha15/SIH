@@ -10,7 +10,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: 'Bus Fleet Intelligence System',
-  description: 'Mobile urban intelligence platform — city-wide road, traffic and safety intelligence from the bus fleet',
+  description: 'Mobile urban intelligence platform — road, traffic and safety intelligence from the BMTC bus fleet, Bengaluru',
 }
 
 export default function RootLayout({

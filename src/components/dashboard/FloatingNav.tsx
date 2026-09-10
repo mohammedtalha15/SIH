@@ -69,6 +69,7 @@ export function FloatingNav({ view, onViewChange }: FloatingNavProps) {
           <span className="hidden truncate text-label font-semibold tracking-tight text-ink sm:block">
             Bus Fleet Intelligence
           </span>
+          <span className="hidden truncate text-label text-ink-muted lg:block">BMTC · Bengaluru</span>
         </span>
 
         <span className="mx-0.5 h-4 w-px shrink-0 bg-hairline" />
