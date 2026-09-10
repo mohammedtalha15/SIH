@@ -1,0 +1,118 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* ANA Airline Theme - Light Mode */
+  --ana-blue: #00467F;
+  --ana-light-blue: #0072CE;
+  --ana-sky: #E8F4FC;
+  --ana-red: #E60012;
+  --ana-gray: #F5F7FA;
+  --ana-soft-gray: #E5E7EB;
+  --ana-dark: #1F2937;
+  
+  --background: #FFFFFF;
+  --foreground: #1F2937;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+}
+
+/* Custom scrollbar for light theme */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--ana-gray);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--ana-soft-gray);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ana-light-blue);
+}
+
+/* Canvas container */
+.canvas-container {
+  width: 100%;
+  height: 100vh;
+  background: linear-gradient(180deg, #E8F4FC 0%, #FFFFFF 100%);
+}
+
+/* Panel styles */
+.info-panel {
+  @apply bg-white rounded-lg shadow-lg border border-ana-soft-gray;
+}
+
+.info-panel-header {
+  @apply bg-ana-blue text-white px-4 py-2 rounded-t-lg font-semibold;
+}
+
+/* Priority badges */
+.badge-standard {
+  @apply bg-ana-gray text-ana-dark px-2 py-0.5 rounded text-xs font-medium;
+}
+
+.badge-express {
+  @apply bg-ana-light-blue text-white px-2 py-0.5 rounded text-xs font-medium;
+}
+
+.badge-priority {
+  @apply bg-ana-red text-white px-2 py-0.5 rounded text-xs font-medium;
+}
+
+/* Tour guide tap animation */
+@keyframes tap {
+  0%, 100% {
+    transform: scale(1) translateY(0);
+  }
+  50% {
+    transform: scale(0.95) translateY(3px);
+  }
+}
+
+/* Tour button wiggle animation */
+@keyframes wiggle {
+  0%, 100% {
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    transform: rotate(-15deg) scale(1.1);
+  }
+  50% {
+    transform: rotate(0deg) scale(1);
+  }
+  75% {
+    transform: rotate(15deg) scale(1.1);
+  }
+}
+
+/* Tour guide zoom animation */
+@keyframes zoom-in-95 {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-in {
+  animation-duration: 200ms;
+  animation-timing-function: ease-out;
+  animation-fill-mode: both;
+}
+
+.zoom-in-95 {
+  animation-name: zoom-in-95;
+}
